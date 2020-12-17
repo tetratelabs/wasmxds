@@ -1,0 +1,67 @@
+apiVersion: wasmxds.tetrate.io/v1alpha1
+kind: WasmExtension
+metadata:
+  # "${namespace}/${name}" (i.e. "default/sample-filter") to be used as an identifier in Envoy configuration.
+  # See the extension's name field in examples/envoy.yaml
+  name: sample-filter
+  namespace: default
+
+spec:
+  # Please refer to https://github.com/envoyproxy/envoy/blob/master/api/envoy/extensions/wasm/v3/wasm.proto
+  # for the following values
+  runtime: v8 # (required)
+  vm_id: vm_id_foo # (required)
+  root_id: root_id_foo # (required)
+  # you can use your k8s configmap/secret or inline string as providing plugin/vm configurations
+  plugin_configuration:
+    # value: "this_is_plugin_config"
+    valueFrom:
+      secretKeyRef:
+        name: my-secret
+        namespace: my-secret-space
+        key: my-config-key
+      # configMapKeyRef:
+      #   name: my-configmap
+      #   namespace: my-config-space
+      #    key: my-config-key
+  vm_configuration:
+    # value: "this_is_vm_config"
+    valueFrom:
+      # secretKeyRef:
+      #   name: my-secret
+      #   namespace: my-secret-space
+      #   key: my-config-key
+      configMapKeyRef:
+        name: my-configmap
+        namespace: my-config-space
+          key: my-config-key
+
+  image:
+    # Specify the protocol to use for fetching wasm binaries. (required).
+    # See api/v1alpha/wasmextension_types.go to check the available protocol.
+    protocol: local_fs
+
+    # The resource identifier which points to your wasm binary. (required).
+    uri: filter.wasm
+
+    # This field is the expected sha256 value of your wasm binary, and is
+    # optional but should be set before shipping to production
+    # sha256: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+    ### The followings are the examples for the other protocols ###
+
+    # uri: webassemblyhub.io/mathetake/example:v0.1
+    # protocol: oci
+
+    # uri: 123456789012.dkr.ecr.us-west-1.amazonaws.com/wasmxds-test:latest
+    # protocol: oci
+
+    # uri: my-s3-bucket/path/to/filter.wasm
+    # protocol: s3
+
+    # uri: foo.com/assets/filter.wasm
+    # protocol: http
+
+    # uri: bar.com/assets/filter.wasm
+    # protocol: https

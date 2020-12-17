@@ -1,0 +1,24 @@
+# permissions for end users to edit wasmextensions.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: wasmextension-editor-role
+rules:
+- apiGroups:
+  - wasmxds.tetrate.io
+  resources:
+  - wasmextensions
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - wasmxds.tetrate.io
+  resources:
+  - wasmextensions/status
+  verbs:
+  - get

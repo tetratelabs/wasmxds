@@ -1,0 +1,17 @@
+version: '3'
+services:
+  registry:
+    image: registry:2
+    network_mode: host
+  envoy:
+    image: envoyproxy/envoy-dev:c41850ce99689180727c65c3c9fa410257ff9cd9 # TODO: replace with 1.17
+    network_mode: host
+    command: envoy -c /wasmxds/e2e/providers/testdata/envoy-e2e.yaml --concurrency 1
+    volumes:
+    - .:/wasmxds
+
+  localstack:
+    image: localstack/localstack
+    network_mode: host
+    environment:
+      - SERVICES=s3

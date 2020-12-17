@@ -1,0 +1,20 @@
+# permissions for end users to view wasmextensions.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: wasmextension-viewer-role
+rules:
+- apiGroups:
+  - wasmxds.tetrate.io
+  resources:
+  - wasmextensions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - wasmxds.tetrate.io
+  resources:
+  - wasmextensions/status
+  verbs:
+  - get

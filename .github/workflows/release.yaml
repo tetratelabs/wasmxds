@@ -1,0 +1,45 @@
+name: release
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  release-binary:
+    name: release-binary
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: set up go 1.15
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: build binary
+        run: make build
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
+
+      - name: build
+        run: docker build . -t getenvoy/wasmxds:${{ env.RELEASE_VERSION }}
+
+      - uses: azure/docker-login@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: push
+        run: |
+          docker tag getenvoy/wasmxds:${{ env.RELEASE_VERSION }} getenvoy/wasmxds:latest
+          docker push getenvoy/wasmxds:${{ env.RELEASE_VERSION }}
+          docker push getenvoy/wasmxds:latest

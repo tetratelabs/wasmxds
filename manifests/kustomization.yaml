@@ -1,0 +1,10 @@
+namespace: wasmxds-system
+namePrefix: wasmxds-
+commonLabels:
+  tetrate.io: wasmxds
+
+resources:
+  - crd
+  - rbac
+  - manager
+
