@@ -34,7 +34,7 @@ spec:
       configMapKeyRef:
         name: my-configmap
         namespace: my-config-space
-          key: my-config-key
+        key: my-config-key
 
   image:
     # Specify the protocol to use for fetching wasm binaries. (required).
